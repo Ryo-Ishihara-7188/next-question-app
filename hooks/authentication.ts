@@ -8,6 +8,9 @@ const userState = atom<User>({
   default: null,
 });
 
+/**
+ * ユーザー認証を実施する
+ */
 export const useAuthenticate = () => {
   const [user, setUser] = useRecoilState(userState);
 
@@ -23,11 +26,12 @@ export const useAuthenticate = () => {
 
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        console.log(`SET USER ${user.uid}`);
-        setUser({
+        const loginUser: User = {
           uid: user.uid,
           isAnonymous: user.isAnonymous,
-        });
+        };
+        setUser(loginUser);
+        createUserIfNotFound(loginUser);
       } else {
         setUser(null);
       }
@@ -35,4 +39,18 @@ export const useAuthenticate = () => {
   }, []);
 
   return { user };
+};
+
+/**
+ * 匿名ユーザーをfirestoreへ格納する
+ * @param user
+ */
+const createUserIfNotFound = async (user: User) => {
+  const userRef = firebase.firestore().collection("users").doc(user.uid);
+  const doc = await userRef.get();
+  if (doc.exists) return;
+
+  await userRef.set({
+    name: "user:" + new Date().getTime(),
+  });
 };
