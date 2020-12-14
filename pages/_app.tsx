@@ -1,6 +1,6 @@
 import { RecoilRoot } from "recoil";
 import "../lib/firebase";
-import "../lib/authentication";
+// import "../hooks/authentication";
 import "../styles/globals.css";
 
 function MyApp({ Component, pageProps }) {
