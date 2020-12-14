@@ -23,6 +23,7 @@ export const useAuthenticate = () => {
 
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
+        console.log(`SET USER ${user.uid}`);
         setUser({
           uid: user.uid,
           isAnonymous: user.isAnonymous,
